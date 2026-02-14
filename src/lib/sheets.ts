@@ -98,7 +98,7 @@ async function ensureSheet(table: TableName): Promise<void> {
       spreadsheetId: sheetId,
       range: `${table}!A1:${getColumnLetter(headers.length - 1)}1`,
       valueInputOption: "RAW",
-      requestBody: { values: [headers] },
+      requestBody: { values: [Array.from(headers)] },
     });
   }
 }
@@ -113,7 +113,8 @@ function mapRowToRecord<T extends TableName>(table: T, row: string[]): TableReco
 
 function mapRecordToRow<T extends TableName>(table: T, record: Partial<TableRecord<T>>): string[] {
   const headers = TABLE_HEADERS[table];
-  return headers.map((header) => record[header] ?? "");
+  const unsafeRecord = record as Record<string, string | undefined>;
+  return headers.map((header) => unsafeRecord[header] ?? "");
 }
 
 export async function list<T extends TableName>(table: T): Promise<TableRecord<T>[]> {

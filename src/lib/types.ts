@@ -1,4 +1,4 @@
-import { ACTIVITY_TYPES, COMPANY_STATUSES, DEAL_STAGES, TABLE_HEADERS, type TableName } from "@/lib/constants";
+import { ACTIVITY_TYPES, COMPANY_STATUSES, DEAL_STAGES, type TableName } from "@/lib/constants";
 
 export type CompanyStatus = (typeof COMPANY_STATUSES)[number];
 export type DealStage = (typeof DEAL_STAGES)[number];
@@ -58,10 +58,9 @@ export interface Activity {
 
 export type Entity = Company | Contact | Deal | Activity;
 
-export type TableRecord<T extends TableName = TableName> = Record<
-  (typeof TABLE_HEADERS)[T][number],
-  string
->;
+// Generic parameter is kept for call-site compatibility (TableRecord<T>).
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type TableRecord<T extends TableName = TableName> = Record<string, string>;
 
 export interface AgentResponse<T = unknown> {
   ok: boolean;
