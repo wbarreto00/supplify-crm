@@ -6,10 +6,10 @@ function escapeValue(value: unknown): string {
   return text;
 }
 
-export function toCsv<T extends Record<string, unknown>>(rows: T[], columns: string[]): string {
+export function toCsv<T>(rows: T[], columns: string[]): string {
   const header = columns.map(escapeValue).join(",");
   const body = rows
-    .map((row) => columns.map((column) => escapeValue(row[column])).join(","))
+    .map((row) => columns.map((column) => escapeValue((row as Record<string, unknown>)[column])).join(","))
     .join("\n");
   return `${header}\n${body}`;
 }
