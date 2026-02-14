@@ -1,0 +1,65 @@
+@baseUrl = http://localhost:3000
+@apiKey = dev-agent-key
+
+### Agent: upsert company
+POST {{baseUrl}}/api/agent/company
+Content-Type: application/json
+X-API-Key: {{apiKey}}
+
+{
+  "name": "Supplify",
+  "segment": "SaaS",
+  "size": "11-50",
+  "owner": "Wesley",
+  "status": "lead",
+  "source": "website",
+  "notes": "Conta priorizada"
+}
+
+### Agent: upsert contact
+POST {{baseUrl}}/api/agent/contact
+Content-Type: application/json
+X-API-Key: {{apiKey}}
+
+{
+  "companyName": "Supplify",
+  "name": "Ana Paula",
+  "role": "Head of Ops",
+  "email": "ana@supplify.com",
+  "phone": "+55 11 99999-0000",
+  "linkedin": "https://linkedin.com/in/anapaula",
+  "notes": "Contato inicial"
+}
+
+### Agent: upsert deal
+POST {{baseUrl}}/api/agent/deal
+Content-Type: application/json
+X-API-Key: {{apiKey}}
+
+{
+  "companyName": "Supplify",
+  "title": "Plano Enterprise",
+  "stage": "proposal",
+  "value": 12000,
+  "probability": 50,
+  "closeDate": "2026-03-15",
+  "owner": "Wesley",
+  "notes": "Aguardando retorno"
+}
+
+### Agent: create activity
+POST {{baseUrl}}/api/agent/activity
+Content-Type: application/json
+X-API-Key: {{apiKey}}
+
+{
+  "companyName": "Supplify",
+  "type": "task",
+  "dueDate": "2026-03-01",
+  "done": false,
+  "notes": "Enviar proposta final"
+}
+
+### Agent: search
+GET {{baseUrl}}/api/agent/search?q=supplify
+X-API-Key: {{apiKey}}
