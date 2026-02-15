@@ -37,63 +37,77 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
   ]);
 
   const currentTab = getCurrentTab(tab);
+  const latestDeal = [...deals].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0] ?? null;
+
+  function asCurrency(value: number): string {
+    return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+  }
+
+  const tabLabel: Record<TabName, string> = {
+    overview: "Visão geral",
+    contacts: "Contatos",
+    deals: "Propostas",
+    activities: "Atividades",
+  };
 
   return (
     <div className="space-y-6">
-      <header className="rounded-lg border border-slate-200 bg-white p-4">
+      <header className="rounded-lg border border-border bg-card p-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-sm text-slate-500">Company</p>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{company.name}</h1>
-            <p className="text-sm text-slate-600">{company.segment || "Sem segmento"}</p>
+            <p className="text-sm text-muted-foreground">Empresa</p>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">{company.name}</h1>
           </div>
-          <Link href="/companies" className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100">
+          <Link href="/companies" className="rounded-md border border-border px-3 py-2 text-sm text-foreground/80 hover:bg-muted">
             Voltar para lista
           </Link>
         </div>
-        <nav className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-3">
+        <nav className="mt-4 flex flex-wrap gap-2 border-t border-border/60 pt-3">
           {tabs.map((item) => (
             <Link
               key={item}
               href={tabHref(company.id, item)}
               className={`rounded-md px-3 py-2 text-sm font-medium ${
-                currentTab === item ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                currentTab === item ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/80 hover:bg-muted/70"
               }`}
             >
-              {item}
+              {tabLabel[item]}
             </Link>
           ))}
         </nav>
       </header>
 
       {currentTab === "overview" ? (
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
+        <section className="rounded-lg border border-border bg-card p-4">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="space-y-2">
               <div className="grid gap-2 sm:grid-cols-2">
-                <div className="rounded-md border border-slate-100 p-3">
-                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Status</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">{company.status}</p>
+                <div className="rounded-md border border-border/60 p-3">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Etapa</p>
+                  <p className="mt-2">
+                    <DealStageBadge stage={company.stage} />
+                  </p>
                 </div>
-                <div className="rounded-md border border-slate-100 p-3">
-                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Owner</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">{company.owner || "-"}</p>
+                <div className="rounded-md border border-border/60 p-3">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Dono</p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">{company.owner || "-"}</p>
                 </div>
-                <div className="rounded-md border border-slate-100 p-3">
-                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Segmento</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">{company.segment || "-"}</p>
+                <div className="rounded-md border border-border/60 p-3 sm:col-span-2">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Proposta (última)</p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    {latestDeal ? latestDeal.title : "-"}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Setup (BRL): {asCurrency(latestDeal?.setupValue ?? 0)} | Mensalidade (BRL): {asCurrency(latestDeal?.monthlyValue ?? 0)}
+                  </p>
                 </div>
-                <div className="rounded-md border border-slate-100 p-3">
-                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Tamanho</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">{company.size || "-"}</p>
+                <div className="rounded-md border border-border/60 p-3 sm:col-span-2">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Origem</p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">{company.source || "-"}</p>
                 </div>
-                <div className="rounded-md border border-slate-100 p-3 sm:col-span-2">
-                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Origem</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">{company.source || "-"}</p>
-                </div>
-                <div className="rounded-md border border-slate-100 p-3 sm:col-span-2">
-                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Notas</p>
-                  <p className="mt-1 whitespace-pre-wrap text-sm text-slate-900">{company.notes || "-"}</p>
+                <div className="rounded-md border border-border/60 p-3 sm:col-span-2">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Notas</p>
+                  <p className="mt-1 whitespace-pre-wrap text-sm text-foreground">{company.notes || "-"}</p>
                 </div>
               </div>
             </div>
@@ -101,7 +115,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
             <div className="flex flex-col gap-2">
               <Link
                 href={`/companies/${company.id}/edit`}
-                className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
               >
                 Editar
               </Link>
@@ -111,62 +125,62 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
       ) : null}
 
       {currentTab === "contacts" ? (
-        <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4">
+        <section className="space-y-4 rounded-lg border border-border bg-card p-4">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold text-slate-900">Contacts</h2>
+            <h2 className="text-lg font-semibold text-foreground">Contatos</h2>
             <Link
               href={`/companies/${company.id}/contacts/new`}
-              className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+              className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
             >
-              + Contact
+              + Contato
             </Link>
           </div>
 
           <div className="space-y-4">
             {contacts.map((contact) => (
-              <article key={contact.id} className="rounded-md border border-slate-200 p-3">
+              <article key={contact.id} className="rounded-md border border-border p-3">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">{contact.name}</p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="text-sm font-semibold text-foreground">{contact.name}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {contact.role || "-"} | {contact.email || "-"} | {contact.phone || "-"}
                     </p>
-                    {contact.linkedin ? <p className="mt-1 text-xs text-slate-500">LinkedIn: {contact.linkedin}</p> : null}
+                    {contact.linkedin ? <p className="mt-1 text-xs text-muted-foreground">LinkedIn: {contact.linkedin}</p> : null}
                   </div>
                   <Link
                     href={`/companies/${company.id}/contacts/${contact.id}/edit`}
-                    className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                    className="rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted"
                   >
                     Editar
                   </Link>
                 </div>
               </article>
             ))}
-            {contacts.length === 0 ? <p className="text-sm text-slate-500">Sem contacts cadastrados.</p> : null}
+            {contacts.length === 0 ? <p className="text-sm text-muted-foreground">Sem contatos cadastrados.</p> : null}
           </div>
         </section>
       ) : null}
 
       {currentTab === "deals" ? (
-        <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4">
+        <section className="space-y-4 rounded-lg border border-border bg-card p-4">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold text-slate-900">Deals</h2>
+            <h2 className="text-lg font-semibold text-foreground">Propostas</h2>
             <Link
               href={`/deals/new?companyId=${encodeURIComponent(company.id)}&redirectTo=${encodeURIComponent(`/companies/${company.id}?tab=deals`)}`}
-              className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+              className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
             >
-              + Deal
+              + Proposta
             </Link>
           </div>
 
           <div className="space-y-4">
             {deals.map((deal) => (
-              <article key={deal.id} className="rounded-md border border-slate-200 p-3">
+              <article key={deal.id} className="rounded-md border border-border p-3">
                 <div className="mb-2 flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-900">{deal.title}</p>
-                    <p className="text-xs text-slate-500">
-                      Setup {deal.setupValue.toLocaleString("pt-BR")} | Mensal {deal.monthlyValue.toLocaleString("pt-BR")}
+                    <p className="text-sm font-medium text-foreground">{deal.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Setup (BRL) {asCurrency(deal.setupValue)} | Mensalidade (BRL) {asCurrency(deal.monthlyValue)}
                     </p>
                   </div>
                   <DealStageBadge stage={deal.stage} />
@@ -174,52 +188,52 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                 <div className="mt-3 flex items-center justify-end gap-2">
                   <Link
                     href={`/deals/${deal.id}/edit?redirectTo=${encodeURIComponent(`/companies/${company.id}?tab=deals`)}`}
-                    className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                    className="rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted"
                   >
                     Editar
                   </Link>
                 </div>
               </article>
             ))}
-            {deals.length === 0 ? <p className="text-sm text-slate-500">Sem deals cadastrados.</p> : null}
+            {deals.length === 0 ? <p className="text-sm text-muted-foreground">Sem propostas cadastradas.</p> : null}
           </div>
         </section>
       ) : null}
 
       {currentTab === "activities" ? (
-        <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4">
+        <section className="space-y-4 rounded-lg border border-border bg-card p-4">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold text-slate-900">Activities</h2>
+            <h2 className="text-lg font-semibold text-foreground">Atividades</h2>
             <Link
               href={`/companies/${company.id}/activities/new`}
-              className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+              className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
             >
-              + Activity
+              + Atividade
             </Link>
           </div>
 
           <div className="space-y-4">
             {activities.map((activity) => (
-              <article key={activity.id} className="rounded-md border border-slate-200 p-3">
+              <article key={activity.id} className="rounded-md border border-border p-3">
                 <div className="mb-2 flex items-center justify-between">
-                  <p className="text-sm text-slate-900">{activity.notes || "Sem descrição"}</p>
+                  <p className="text-sm text-foreground">{activity.notes || "Sem descrição"}</p>
                   <ActivityTypeBadge type={activity.type} />
                 </div>
                 <div className="mt-3 flex items-center justify-between gap-2">
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     {activity.dueDate ? `Vence em ${activity.dueDate}` : "Sem data"} |{" "}
                     {activity.done ? "Concluída" : "Pendente"}
                   </p>
                   <Link
                     href={`/companies/${company.id}/activities/${activity.id}/edit`}
-                    className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                    className="rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted"
                   >
                     Editar
                   </Link>
                 </div>
               </article>
             ))}
-            {activities.length === 0 ? <p className="text-sm text-slate-500">Sem activities cadastradas.</p> : null}
+            {activities.length === 0 ? <p className="text-sm text-muted-foreground">Sem atividades cadastradas.</p> : null}
           </div>
         </section>
       ) : null}

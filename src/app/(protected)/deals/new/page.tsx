@@ -14,33 +14,33 @@ export default async function NewDealPage({ searchParams }: NewDealPageProps) {
 
   return (
     <div className="space-y-6">
-      <header className="rounded-lg border border-slate-200 bg-white p-4">
+      <header className="rounded-lg border border-border bg-card p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight text-slate-900">Novo deal</h1>
-            <p className="text-sm text-slate-600">Cadastro separado para manter o board limpo.</p>
+            <h1 className="text-xl font-semibold tracking-tight text-foreground">Nova proposta</h1>
+            <p className="text-sm text-muted-foreground">Cadastro separado para manter o kanban limpo.</p>
           </div>
           <Link
             href={redirectTo}
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+            className="rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted"
           >
             Voltar
           </Link>
         </div>
       </header>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4">
+      <section className="rounded-lg border border-border bg-card p-4">
         <form action="/api/forms/deal" method="post" className="grid gap-3 md:grid-cols-2">
           <input type="hidden" name="action" value="create" />
           <input type="hidden" name="redirectTo" value={redirectTo} />
 
-          <label className="text-sm text-slate-700">
-            Company
+          <label className="text-sm text-foreground/80">
+            Empresa
             <select
               name="companyId"
               required
               defaultValue={companyId}
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             >
               <option value="">Selecione</option>
               {companies.map((company) => (
@@ -50,54 +50,54 @@ export default async function NewDealPage({ searchParams }: NewDealPageProps) {
               ))}
             </select>
           </label>
-          <label className="text-sm text-slate-700">
+          <label className="text-sm text-foreground/80">
             Título
-            <input name="title" required className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+            <input name="title" required className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
           </label>
-          <label className="text-sm text-slate-700">
-            Stage
-            <select name="stage" defaultValue="new" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm">
+          <label className="text-sm text-foreground/80">
+            Etapa
+            <select name="stage" defaultValue="new" className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
               <DealStageOptions />
             </select>
           </label>
-          <label className="text-sm text-slate-700">
-            Valor total
-            <input name="value" type="number" min="0" step="0.01" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+          <label className="text-sm text-foreground/80">
+            Total (BRL)
+            <input name="value" type="number" min="0" step="0.01" className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
           </label>
-          <label className="text-sm text-slate-700">
-            Setup
-            <input name="setupValue" type="number" min="0" step="0.01" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+          <label className="text-sm text-foreground/80">
+            Setup (BRL)
+            <input name="setupValue" type="number" min="0" step="0.01" className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
           </label>
-          <label className="text-sm text-slate-700">
-            Mensalidade
-            <input name="monthlyValue" type="number" min="0" step="0.01" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+          <label className="text-sm text-foreground/80">
+            Mensalidade (BRL)
+            <input name="monthlyValue" type="number" min="0" step="0.01" className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
           </label>
-          <label className="text-sm text-slate-700">
+          <label className="text-sm text-foreground/80">
             Probabilidade (%)
-            <input name="probability" type="number" min="0" max="100" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+            <input name="probability" type="number" min="0" max="100" className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
           </label>
-          <label className="text-sm text-slate-700">
+          <label className="text-sm text-foreground/80">
             Fechamento
-            <input name="closeDate" type="date" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+            <input name="closeDate" type="date" className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
           </label>
-          <label className="text-sm text-slate-700">
-            Owner
-            <input name="owner" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+          <label className="text-sm text-foreground/80">
+            Dono
+            <input name="owner" className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
           </label>
-          <label className="text-sm text-slate-700 md:col-span-2">
+          <label className="text-sm text-foreground/80 md:col-span-2">
             Notas
-            <textarea name="notes" rows={3} className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+            <textarea name="notes" rows={3} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
           </label>
           <div className="md:col-span-2 flex gap-2">
             <button
               type="submit"
-              className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
             >
-              Criar deal
+              Criar proposta
             </button>
             <Link
               href={redirectTo}
-              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+              className="rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground/80 hover:bg-muted"
             >
               Cancelar
             </Link>
@@ -107,4 +107,3 @@ export default async function NewDealPage({ searchParams }: NewDealPageProps) {
     </div>
   );
 }
-

@@ -49,11 +49,9 @@ async function main() {
     try {
       const company = await upsertCompany({
         name: row.companyName,
-        segment: "",
-        size: "",
+        stage: row.stage,
         owner: row.owner,
-        status: "prospect",
-        source: "snov.io",
+        source: "Snov.io",
         notes: `Imported from Snov.io (deal ${row.snovDealId})`,
       });
 

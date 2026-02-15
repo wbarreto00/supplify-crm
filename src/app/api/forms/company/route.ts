@@ -37,10 +37,8 @@ export async function POST(request: NextRequest) {
   await upsertCompany({
     id: action === "update" ? id : undefined,
     name: parsed.data.name,
-    segment: parsed.data.segment,
-    size: parsed.data.size,
+    stage: parsed.data.stage,
     owner: parsed.data.owner,
-    status: parsed.data.status,
     source: parsed.data.source,
     notes: parsed.data.notes,
   });

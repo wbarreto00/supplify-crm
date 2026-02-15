@@ -1,16 +1,13 @@
-import { ACTIVITY_TYPES, COMPANY_STATUSES, DEAL_STAGES, type TableName } from "@/lib/constants";
+import { ACTIVITY_TYPES, DEAL_STAGES, type TableName } from "@/lib/constants";
 
-export type CompanyStatus = (typeof COMPANY_STATUSES)[number];
 export type DealStage = (typeof DEAL_STAGES)[number];
 export type ActivityType = (typeof ACTIVITY_TYPES)[number];
 
 export interface Company {
   id: string;
   name: string;
-  segment: string;
-  size: string;
+  stage: DealStage;
   owner: string;
-  status: CompanyStatus;
   source: string;
   notes: string;
   createdAt: string;

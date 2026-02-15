@@ -11,12 +11,12 @@ describe("validation schemas", () => {
   it("valida company", () => {
     const parsed = companyInputSchema.parse({
       name: "  Supplify  ",
-      status: "lead",
+      stage: "new",
       notes: "test",
     });
 
     expect(parsed.name).toBe("Supplify");
-    expect(parsed.status).toBe("lead");
+    expect(parsed.stage).toBe("new");
   });
 
   it("valida contact", () => {

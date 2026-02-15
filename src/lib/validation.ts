@@ -1,4 +1,4 @@
-import { ACTIVITY_TYPES, COMPANY_STATUSES, DEAL_STAGES } from "@/lib/constants";
+import { ACTIVITY_TYPES, DEAL_STAGES } from "@/lib/constants";
 import { z } from "zod";
 
 const trimmedText = z.string().trim();
@@ -39,10 +39,8 @@ const dateish = z
 
 export const companyInputSchema = z.object({
   name: requiredText.min(1, "Company name is required"),
-  segment: optionalText,
-  size: optionalText,
+  stage: z.enum(DEAL_STAGES).default("new"),
   owner: optionalText,
-  status: z.enum(COMPANY_STATUSES).default("lead"),
   source: optionalText,
   notes: optionalText,
 });

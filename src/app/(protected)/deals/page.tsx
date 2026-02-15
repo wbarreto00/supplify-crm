@@ -1,6 +1,6 @@
 import { DealStageBadge } from "@/components/badges";
 import { DealStageOptions } from "@/components/forms";
-import { DEAL_STAGES } from "@/lib/constants";
+import { DEAL_STAGES, STAGE_LABEL_PT } from "@/lib/constants";
 import { listCompanies, listDeals } from "@/lib/repository";
 import Link from "next/link";
 
@@ -47,23 +47,23 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-lg border border-slate-200 bg-white p-4">
+      <section className="rounded-lg border border-border bg-card p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight text-slate-900">Deals</h1>
-            <p className="text-sm text-slate-600">Pipeline com filtros, tabela e kanban estilo board.</p>
+            <h1 className="text-xl font-semibold tracking-tight text-foreground">Propostas</h1>
+            <p className="text-sm text-muted-foreground">Pipeline com filtros, tabela e kanban.</p>
           </div>
           <div className="flex items-center gap-2">
             <Link
               href="/deals/new"
-              className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+              className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
             >
-              + Deal
+              + Proposta
             </Link>
             <a
               href={`/deals?${tableQuery.toString()}`}
               className={`rounded-md px-3 py-2 text-sm font-medium ${
-                currentView === "table" ? "bg-slate-900 text-white" : "border border-slate-300 text-slate-700 hover:bg-slate-100"
+                currentView === "table" ? "bg-primary text-primary-foreground" : "border border-border text-foreground/80 hover:bg-muted"
               }`}
             >
               Tabela
@@ -71,14 +71,14 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
             <a
               href={`/deals?${kanbanQuery.toString()}`}
               className={`rounded-md px-3 py-2 text-sm font-medium ${
-                currentView === "kanban" ? "bg-slate-900 text-white" : "border border-slate-300 text-slate-700 hover:bg-slate-100"
+                currentView === "kanban" ? "bg-primary text-primary-foreground" : "border border-border text-foreground/80 hover:bg-muted"
               }`}
             >
               Kanban
             </a>
             <a
               href="/api/export/deals"
-              className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+              className="rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted"
             >
               Exportar CSV
             </a>
@@ -90,17 +90,17 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
           <input
             name="q"
             defaultValue={q}
-            placeholder="Buscar por título, company, owner..."
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm md:col-span-3"
+            placeholder="Buscar por título, empresa, dono..."
+            className="rounded-md border border-input bg-background px-3 py-2 text-sm md:col-span-3"
           />
-          <select name="stage" defaultValue={stage} className="rounded-md border border-slate-300 px-3 py-2 text-sm">
-            <option value="">Todos os stages</option>
+          <select name="stage" defaultValue={stage} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+            <option value="">Todas as etapas</option>
             <DealStageOptions />
           </select>
           <div className="md:col-span-4">
             <button
               type="submit"
-              className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
             >
               Filtrar
             </button>
@@ -109,32 +109,32 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
       </section>
 
       {currentView === "table" ? (
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <h2 className="text-lg font-semibold text-slate-900">Pipeline ({filteredDeals.length})</h2>
+        <section className="rounded-lg border border-border bg-card p-4">
+          <h2 className="text-lg font-semibold text-foreground">Pipeline ({filteredDeals.length})</h2>
           <div className="mt-3 overflow-x-auto">
             <table className="min-w-full text-left text-sm">
-              <thead className="border-b border-slate-200 text-slate-500">
+              <thead className="border-b border-border text-muted-foreground">
                 <tr>
                   <th className="pb-2 font-medium">Título</th>
-                  <th className="pb-2 font-medium">Company</th>
-                  <th className="pb-2 font-medium">Stage</th>
-                  <th className="pb-2 font-medium">Setup</th>
-                  <th className="pb-2 font-medium">Mensalidade</th>
-                  <th className="pb-2 font-medium">Valor total</th>
+                  <th className="pb-2 font-medium">Empresa</th>
+                  <th className="pb-2 font-medium">Etapa</th>
+                  <th className="pb-2 font-medium">Setup (BRL)</th>
+                  <th className="pb-2 font-medium">Mensalidade (BRL)</th>
+                  <th className="pb-2 font-medium">Total (BRL)</th>
                   <th className="pb-2 font-medium">Fechamento</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredDeals.map((deal) => (
-                  <tr key={deal.id} className="border-b border-slate-100">
-                    <td className="py-3 text-slate-900">
+                  <tr key={deal.id} className="border-b border-border/60">
+                    <td className="py-3 text-foreground">
                       <Link href={`/deals/${deal.id}/edit?redirectTo=${encodeURIComponent(`/deals?${new URLSearchParams({ q, stage, view: currentView }).toString()}`)}`} className="hover:underline">
                         {deal.title}
                       </Link>
                     </td>
                     <td className="py-3">
                       {companiesById.has(deal.companyId) ? (
-                        <Link href={`/companies/${deal.companyId}?tab=deals`} className="text-sky-700 hover:underline">
+                        <Link href={`/companies/${deal.companyId}?tab=deals`} className="text-primary hover:underline">
                           {companiesById.get(deal.companyId)?.name}
                         </Link>
                       ) : (
@@ -152,19 +152,19 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
                 ))}
               </tbody>
             </table>
-            {filteredDeals.length === 0 ? <p className="mt-3 text-sm text-slate-500">Nenhum deal encontrado.</p> : null}
+            {filteredDeals.length === 0 ? <p className="mt-3 text-sm text-muted-foreground">Nenhuma proposta encontrada.</p> : null}
           </div>
         </section>
       ) : (
-        <section className="rounded-lg border border-slate-200 bg-slate-100 p-4">
-          <h2 className="text-lg font-semibold text-slate-900">Kanban ({filteredDeals.length})</h2>
+        <section className="rounded-lg border border-border bg-muted/40 p-4">
+          <h2 className="text-lg font-semibold text-foreground">Kanban ({filteredDeals.length})</h2>
           <div className="mt-4 overflow-x-auto">
             <div className="grid min-w-max grid-flow-col gap-4">
               {DEAL_STAGES.map((stageItem) => (
-                <article key={stageItem} className="w-80 rounded-lg border border-slate-200 bg-white p-3">
-                  <header className="mb-3 flex items-center justify-between border-b border-slate-100 pb-2">
-                    <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-700">{stageItem}</h3>
-                    <span className="rounded-full bg-slate-900 px-2 py-1 text-xs text-white">
+                <article key={stageItem} className="w-80 rounded-lg border border-border bg-card p-3">
+                  <header className="mb-3 flex items-center justify-between border-b border-border/60 pb-2">
+                    <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground/80">{STAGE_LABEL_PT[stageItem]}</h3>
+                    <span className="rounded-full bg-primary px-2 py-1 text-xs text-primary-foreground">
                       {dealsByStage.get(stageItem)?.length ?? 0}
                     </span>
                   </header>
@@ -173,18 +173,18 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
                       <Link
                         key={deal.id}
                         href={`/deals/${deal.id}/edit?redirectTo=${encodeURIComponent(`/deals?${new URLSearchParams({ q, stage, view: currentView }).toString()}`)}`}
-                        className="block rounded-md border border-slate-200 bg-slate-50 p-3 hover:border-sky-300 hover:bg-sky-50"
+                        className="block rounded-md border border-border bg-background p-3 hover:border-primary/40 hover:bg-secondary/40"
                       >
-                        <p className="text-sm font-semibold text-slate-900">{deal.title}</p>
-                        <p className="mt-1 text-xs text-slate-500">{companiesById.get(deal.companyId)?.name || "Sem company"}</p>
-                        <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-700">
-                          <div className="rounded bg-white px-2 py-1">Setup: {asCurrency(deal.setupValue)}</div>
-                          <div className="rounded bg-white px-2 py-1">Mensal: {asCurrency(deal.monthlyValue)}</div>
+                        <p className="text-sm font-semibold text-foreground">{deal.title}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">{companiesById.get(deal.companyId)?.name || "Sem empresa"}</p>
+                        <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-foreground/80">
+                          <div className="rounded bg-card px-2 py-1">Setup: {asCurrency(deal.setupValue)}</div>
+                          <div className="rounded bg-card px-2 py-1">Mensal: {asCurrency(deal.monthlyValue)}</div>
                         </div>
                       </Link>
                     ))}
                     {(dealsByStage.get(stageItem)?.length ?? 0) === 0 ? (
-                      <p className="text-xs text-slate-500">Sem deals nesta coluna.</p>
+                      <p className="text-xs text-muted-foreground">Sem propostas nesta coluna.</p>
                     ) : null}
                   </div>
                 </article>

@@ -26,11 +26,9 @@ export async function POST(request: NextRequest) {
     } else {
       const createdCompany = await upsertCompany({
         name: parsed.data.companyName,
-        segment: "",
-        size: "",
+        stage: "new",
         owner: "",
-        status: "lead",
-        source: "agent",
+        source: "Inbound",
         notes: "",
       });
       companyId = createdCompany.id;
