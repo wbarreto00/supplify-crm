@@ -122,22 +122,28 @@ export async function list<T extends TableName>(table: T): Promise<TableRecord<T
     return getInMemoryDb()[table] as TableRecord<T>[];
   }
 
-  await ensureSheet(table);
-  const clientResult = await getSheetsClient();
-  if (!clientResult) {
+  try {
+    await ensureSheet(table);
+    const clientResult = await getSheetsClient();
+    if (!clientResult) {
+      return [];
+    }
+
+    const { client, sheetId } = clientResult;
+    const response = await client.spreadsheets.values.get({
+      spreadsheetId: sheetId,
+      range: `${table}!A2:Z`,
+    });
+
+    const rows = response.data.values ?? [];
+    return rows
+      .filter((row) => row.some((cell) => String(cell ?? "").trim() !== ""))
+      .map((row) => mapRowToRecord(table, row));
+  } catch (error) {
+    // Avoid crashing the whole app when Sheets is rate-limited or transiently unavailable.
+    console.error("[sheets.list] error", { table, error });
     return [];
   }
-
-  const { client, sheetId } = clientResult;
-  const response = await client.spreadsheets.values.get({
-    spreadsheetId: sheetId,
-    range: `${table}!A2:Z`,
-  });
-
-  const rows = response.data.values ?? [];
-  return rows
-    .filter((row) => row.some((cell) => String(cell ?? "").trim() !== ""))
-    .map((row) => mapRowToRecord(table, row));
 }
 
 export async function getById<T extends TableName>(table: T, id: string): Promise<TableRecord<T> | null> {

@@ -1,4 +1,5 @@
-import { ActivityTypeBadge, CompanyStatusBadge, DealStageBadge } from "@/components/badges";
+import { ActivityTypeBadge } from "@/components/badges";
+import { COMPANY_STATUSES, DEAL_STAGES } from "@/lib/constants";
 import { listActivities, listCompanies, listDeals } from "@/lib/repository";
 
 function asCurrency(value: number): string {
@@ -14,13 +15,28 @@ export default async function DashboardPage() {
     listActivities(),
   ]);
 
-  const openDeals = deals.filter((deal) => !["won", "lost"].includes(deal.stage));
-  const wonValue = deals.filter((deal) => deal.stage === "won").reduce((sum, deal) => sum + deal.value, 0);
   const today = new Date().toISOString().slice(0, 10);
   const upcomingActivities = activities
     .filter((activity) => !activity.done && activity.dueDate >= today)
     .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
     .slice(0, 8);
+
+  const companiesByStatus = Object.fromEntries(
+    COMPANY_STATUSES.map((status) => [status, companies.filter((c) => c.status === status).length]),
+  ) as Record<(typeof COMPANY_STATUSES)[number], number>;
+
+  const dealsByStage = Object.fromEntries(
+    DEAL_STAGES.map((stage) => [stage, deals.filter((d) => d.stage === stage).length]),
+  ) as Record<(typeof DEAL_STAGES)[number], number>;
+
+  const proposals = deals.filter((deal) => deal.stage === "proposal");
+  const proposalCount = proposals.length;
+  const proposalTotalValue = proposals.reduce((sum, deal) => sum + deal.value, 0);
+  const proposalTotalSetup = proposals.reduce((sum, deal) => sum + deal.setupValue, 0);
+  const proposalTotalMonthly = proposals.reduce((sum, deal) => sum + deal.monthlyValue, 0);
+
+  const proposalAvgSetup = proposalCount > 0 ? proposalTotalSetup / proposalCount : 0;
+  const proposalAvgMonthly = proposalCount > 0 ? proposalTotalMonthly / proposalCount : 0;
 
   return (
     <div className="space-y-6">
@@ -30,12 +46,12 @@ export default async function DashboardPage() {
           <p className="mt-2 text-3xl font-semibold text-slate-900">{companies.length}</p>
         </article>
         <article className="rounded-lg border border-slate-200 bg-white p-4">
-          <p className="text-sm text-slate-600">Deals em aberto</p>
-          <p className="mt-2 text-3xl font-semibold text-slate-900">{openDeals.length}</p>
+          <p className="text-sm text-slate-600">Propostas</p>
+          <p className="mt-2 text-3xl font-semibold text-slate-900">{proposalCount}</p>
         </article>
         <article className="rounded-lg border border-slate-200 bg-white p-4">
-          <p className="text-sm text-slate-600">Valor ganho</p>
-          <p className="mt-2 text-3xl font-semibold text-slate-900">{asCurrency(wonValue)}</p>
+          <p className="text-sm text-slate-600">Valor total (propostas)</p>
+          <p className="mt-2 text-3xl font-semibold text-slate-900">{asCurrency(proposalTotalValue)}</p>
         </article>
         <article className="rounded-lg border border-slate-200 bg-white p-4">
           <p className="text-sm text-slate-600">Atividades pendentes</p>
@@ -43,47 +59,26 @@ export default async function DashboardPage() {
         </article>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="text-lg font-semibold text-slate-900">Pipeline recente</h2>
-        <div className="mt-4 overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-slate-200 text-slate-500">
-              <tr>
-                <th className="pb-2 font-medium">Deal</th>
-                <th className="pb-2 font-medium">Stage</th>
-                <th className="pb-2 font-medium">Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {deals.slice(0, 6).map((deal) => (
-                <tr key={deal.id} className="border-b border-slate-100">
-                  <td className="py-3">{deal.title}</td>
-                  <td className="py-3">
-                    <DealStageBadge stage={deal.stage} />
-                  </td>
-                  <td className="py-3">{asCurrency(deal.value)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {deals.length === 0 ? <p className="mt-3 text-sm text-slate-500">Nenhum deal cadastrado.</p> : null}
-        </div>
-      </section>
-
       <section className="grid gap-6 xl:grid-cols-2">
         <article className="rounded-lg border border-slate-200 bg-white p-4">
-          <h2 className="text-lg font-semibold text-slate-900">Companies recentes</h2>
-          <div className="mt-3 space-y-2">
-            {companies.slice(0, 6).map((company) => (
-              <div key={company.id} className="flex items-center justify-between rounded-md border border-slate-100 px-3 py-2">
-                <div>
-                  <p className="text-sm font-medium text-slate-900">{company.name}</p>
-                  <p className="text-xs text-slate-500">{company.owner || "Sem owner"}</p>
-                </div>
-                <CompanyStatusBadge status={company.status} />
-              </div>
-            ))}
-            {companies.length === 0 ? <p className="text-sm text-slate-500">Nenhuma company cadastrada.</p> : null}
+          <h2 className="text-lg font-semibold text-slate-900">Indicadores</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-md border border-slate-100 p-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Ticket médio setup</p>
+              <p className="mt-2 text-lg font-semibold text-slate-900">{asCurrency(proposalAvgSetup)}</p>
+            </div>
+            <div className="rounded-md border border-slate-100 p-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Ticket médio recorrente</p>
+              <p className="mt-2 text-lg font-semibold text-slate-900">{asCurrency(proposalAvgMonthly)}</p>
+            </div>
+            <div className="rounded-md border border-slate-100 p-3 sm:col-span-2">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total setup (propostas)</p>
+              <p className="mt-2 text-lg font-semibold text-slate-900">{asCurrency(proposalTotalSetup)}</p>
+            </div>
+            <div className="rounded-md border border-slate-100 p-3 sm:col-span-2">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total recorrente (propostas)</p>
+              <p className="mt-2 text-lg font-semibold text-slate-900">{asCurrency(proposalTotalMonthly)}</p>
+            </div>
           </div>
         </article>
 
@@ -100,6 +95,31 @@ export default async function DashboardPage() {
               </div>
             ))}
             {upcomingActivities.length === 0 ? <p className="text-sm text-slate-500">Sem atividades próximas.</p> : null}
+          </div>
+        </article>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-2">
+        <article className="rounded-lg border border-slate-200 bg-white p-4">
+          <h2 className="text-lg font-semibold text-slate-900">Companies por status</h2>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {COMPANY_STATUSES.map((status) => (
+              <div key={status} className="flex items-center justify-between rounded-md border border-slate-100 px-3 py-2">
+                <p className="text-sm text-slate-700">{status}</p>
+                <p className="text-sm font-semibold text-slate-900">{companiesByStatus[status]}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+        <article className="rounded-lg border border-slate-200 bg-white p-4">
+          <h2 className="text-lg font-semibold text-slate-900">Deals por stage</h2>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {DEAL_STAGES.map((stage) => (
+              <div key={stage} className="flex items-center justify-between rounded-md border border-slate-100 px-3 py-2">
+                <p className="text-sm text-slate-700">{stage}</p>
+                <p className="text-sm font-semibold text-slate-900">{dealsByStage[stage]}</p>
+              </div>
+            ))}
           </div>
         </article>
       </section>

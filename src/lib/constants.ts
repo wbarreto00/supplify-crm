@@ -62,7 +62,15 @@ export const DEAL_STAGES = [
   "won",
   "lost",
 ] as const;
-export const ACTIVITY_TYPES = ["call", "email", "meeting", "task"] as const;
+// Activities also represent communications with leads.
+export const ACTIVITY_TYPES = [
+  "call",
+  "email",
+  "linkedin",
+  "whatsapp",
+  "meeting",
+  "task",
+] as const;
 
 export const SESSION_COOKIE_NAME = "supplify_session";
 export const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;

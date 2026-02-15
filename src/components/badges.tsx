@@ -36,6 +36,8 @@ export function ActivityTypeBadge({ type }: { type: ActivityType }) {
   const tone = {
     call: "bg-cyan-100 text-cyan-800",
     email: "bg-fuchsia-100 text-fuchsia-800",
+    linkedin: "bg-sky-100 text-sky-800",
+    whatsapp: "bg-emerald-100 text-emerald-800",
     meeting: "bg-lime-100 text-lime-800",
     task: "bg-slate-200 text-slate-700",
   }[type];

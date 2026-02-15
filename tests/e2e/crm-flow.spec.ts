@@ -14,20 +14,27 @@ test("login -> criar company -> criar deal -> validar detalhes", async ({ page }
   await page.getByRole("link", { name: "Companies" }).click();
   await expect(page).toHaveURL(/\/companies/);
 
-  await page.locator('input[name="name"]').first().fill(companyName);
-  await page.locator('input[name="segment"]').first().fill("SaaS");
-  await page.locator('input[name="owner"]').first().fill("E2E Bot");
+  await page.getByRole("link", { name: "+ Company" }).click();
+  await expect(page).toHaveURL(/\/companies\/new/);
+
+  await page.locator('input[name="name"]').fill(companyName);
+  await page.locator('input[name="segment"]').fill("SaaS");
+  await page.locator('input[name="owner"]').fill("E2E Bot");
   await page.getByRole("button", { name: "Criar company" }).click();
 
+  await expect(page).toHaveURL(/\/companies/);
   await page.getByRole("link", { name: companyName }).click();
   await expect(page).toHaveURL(/\/companies\//);
 
   await page.locator('a[href*="tab=deals"]').click();
   await expect(page).toHaveURL(/tab=deals/);
 
-  await page.locator('input[name="title"]').first().fill(dealTitle);
-  await page.locator('input[name="value"]').first().fill("5000");
-  await page.locator('input[name="probability"]').first().fill("70");
+  await page.getByRole("link", { name: "+ Deal" }).click();
+  await expect(page).toHaveURL(/\/deals\/new/);
+
+  await page.locator('input[name="title"]').fill(dealTitle);
+  await page.locator('input[name="value"]').fill("5000");
+  await page.locator('input[name="probability"]').fill("70");
   await page.getByRole("button", { name: "Criar deal" }).click();
 
   await expect(page.getByText(dealTitle)).toBeVisible();

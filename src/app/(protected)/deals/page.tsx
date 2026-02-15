@@ -54,6 +54,12 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
             <p className="text-sm text-slate-600">Pipeline com filtros, tabela e kanban estilo board.</p>
           </div>
           <div className="flex items-center gap-2">
+            <Link
+              href="/deals/new"
+              className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+            >
+              + Deal
+            </Link>
             <a
               href={`/deals?${tableQuery.toString()}`}
               className={`rounded-md px-3 py-2 text-sm font-medium ${
@@ -102,76 +108,6 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
         </form>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="text-lg font-semibold text-slate-900">Novo deal</h2>
-        <form action="/api/forms/deal" method="post" className="mt-4 grid gap-3 md:grid-cols-2">
-          <input type="hidden" name="action" value="create" />
-          <input type="hidden" name="redirectTo" value={`/deals?view=${currentView}`} />
-
-          <label className="text-sm text-slate-700">
-            Company
-            <select name="companyId" required className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm">
-              <option value="">Selecione</option>
-              {companies.map((company) => (
-                <option key={company.id} value={company.id}>
-                  {company.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="text-sm text-slate-700">
-            Título
-            <input name="title" required className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
-          </label>
-          <label className="text-sm text-slate-700">
-            Stage
-            <select name="stage" defaultValue="new" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm">
-              {DEAL_STAGES.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="text-sm text-slate-700">
-            Valor total
-            <input name="value" type="number" min="0" step="0.01" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
-          </label>
-          <label className="text-sm text-slate-700">
-            Setup
-            <input name="setupValue" type="number" min="0" step="0.01" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
-          </label>
-          <label className="text-sm text-slate-700">
-            Mensalidade
-            <input name="monthlyValue" type="number" min="0" step="0.01" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
-          </label>
-          <label className="text-sm text-slate-700">
-            Probabilidade (%)
-            <input name="probability" type="number" min="0" max="100" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
-          </label>
-          <label className="text-sm text-slate-700">
-            Fechamento
-            <input name="closeDate" type="date" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
-          </label>
-          <label className="text-sm text-slate-700">
-            Owner
-            <input name="owner" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
-          </label>
-          <label className="text-sm text-slate-700 md:col-span-2">
-            Notas
-            <textarea name="notes" rows={2} className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
-          </label>
-          <div className="md:col-span-2">
-            <button
-              type="submit"
-              className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
-            >
-              Criar deal
-            </button>
-          </div>
-        </form>
-      </section>
-
       {currentView === "table" ? (
         <section className="rounded-lg border border-slate-200 bg-white p-4">
           <h2 className="text-lg font-semibold text-slate-900">Pipeline ({filteredDeals.length})</h2>
@@ -191,7 +127,11 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
               <tbody>
                 {filteredDeals.map((deal) => (
                   <tr key={deal.id} className="border-b border-slate-100">
-                    <td className="py-3 text-slate-900">{deal.title}</td>
+                    <td className="py-3 text-slate-900">
+                      <Link href={`/deals/${deal.id}/edit?redirectTo=${encodeURIComponent(`/deals?${new URLSearchParams({ q, stage, view: currentView }).toString()}`)}`} className="hover:underline">
+                        {deal.title}
+                      </Link>
+                    </td>
                     <td className="py-3">
                       {companiesById.has(deal.companyId) ? (
                         <Link href={`/companies/${deal.companyId}?tab=deals`} className="text-sky-700 hover:underline">
@@ -232,7 +172,7 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
                     {(dealsByStage.get(stageItem) ?? []).map((deal) => (
                       <Link
                         key={deal.id}
-                        href={`/companies/${deal.companyId}?tab=deals`}
+                        href={`/deals/${deal.id}/edit?redirectTo=${encodeURIComponent(`/deals?${new URLSearchParams({ q, stage, view: currentView }).toString()}`)}`}
                         className="block rounded-md border border-slate-200 bg-slate-50 p-3 hover:border-sky-300 hover:bg-sky-50"
                       >
                         <p className="text-sm font-semibold text-slate-900">{deal.title}</p>

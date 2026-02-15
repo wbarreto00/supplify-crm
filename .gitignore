@@ -43,3 +43,6 @@ next-env.d.ts
 
 test-results/
 playwright-report/
+
+# local data dumps (Snov payloads etc.)
+/data/
