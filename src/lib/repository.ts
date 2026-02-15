@@ -42,12 +42,17 @@ function toContact(record: Record<string, string>): Contact {
 }
 
 function toDeal(record: Record<string, string>): Deal {
+  const value = parseNumber(record.value);
+  const monthlyValue = parseNumber(record.monthlyValue || record.value);
+  const setupValue = parseNumber(record.setupValue);
   return {
     id: record.id,
     companyId: record.companyId,
     title: record.title,
     stage: (record.stage as Deal["stage"]) || "new",
-    value: parseNumber(record.value),
+    value,
+    setupValue,
+    monthlyValue,
     probability: clamp(parseNumber(record.probability), 0, 100),
     closeDate: record.closeDate,
     owner: record.owner,
@@ -225,6 +230,8 @@ export async function upsertDeal(input: Omit<Deal, "id" | "createdAt" | "updated
     title: input.title,
     stage: input.stage,
     value: Math.max(0, input.value),
+    setupValue: Math.max(0, input.setupValue),
+    monthlyValue: Math.max(0, input.monthlyValue || input.value),
     probability: clamp(input.probability, 0, 100),
     closeDate: input.closeDate,
     owner: input.owner,
@@ -241,6 +248,8 @@ export async function upsertDeal(input: Omit<Deal, "id" | "createdAt" | "updated
       title: deal.title,
       stage: deal.stage,
       value: String(deal.value),
+      setupValue: String(deal.setupValue),
+      monthlyValue: String(deal.monthlyValue),
       probability: String(deal.probability),
       closeDate: deal.closeDate,
       owner: deal.owner,

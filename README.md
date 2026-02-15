@@ -14,7 +14,7 @@ CRM simples em Next.js (App Router) com persistência em Google Sheets e API ide
 - Login por senha (`ADMIN_PASSWORD`) com sessão em cookie assinado
 - Dashboard com métricas e atividades próximas
 - Companies: lista, busca, filtro, criação, edição, exclusão e export CSV
-- Deals: lista, busca, filtro, criação e export CSV
+- Deals: lista (tabela), view kanban, busca, filtro, criação e export CSV
 - Company detail com abas:
   - `overview` (editar/excluir company)
   - `contacts` (CRUD)
@@ -49,7 +49,7 @@ GOOGLE_SHEETS_PRIVATE_KEY=
 
 - `companies`: `id,name,segment,size,owner,status,source,notes,createdAt,updatedAt`
 - `contacts`: `id,companyId,name,role,email,phone,linkedin,notes,createdAt,updatedAt`
-- `deals`: `id,companyId,title,stage,value,probability,closeDate,owner,notes,createdAt,updatedAt`
+- `deals`: `id,companyId,title,stage,value,setupValue,monthlyValue,probability,closeDate,owner,notes,createdAt,updatedAt`
 - `activities`: `id,companyId,contactId,type,dueDate,done,notes,createdAt,updatedAt`
 
 4. No Google Cloud Console:

@@ -41,6 +41,8 @@ X-API-Key: {{apiKey}}
   "title": "Plano Enterprise",
   "stage": "proposal",
   "value": 12000,
+  "setupValue": 3000,
+  "monthlyValue": 9000,
   "probability": 50,
   "closeDate": "2026-03-15",
   "owner": "Wesley",

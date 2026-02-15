@@ -29,6 +29,8 @@ export const TABLE_HEADERS = {
     "title",
     "stage",
     "value",
+    "setupValue",
+    "monthlyValue",
     "probability",
     "closeDate",
     "owner",

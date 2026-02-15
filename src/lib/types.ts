@@ -36,6 +36,8 @@ export interface Deal {
   title: string;
   stage: DealStage;
   value: number;
+  setupValue: number;
+  monthlyValue: number;
   probability: number;
   closeDate: string;
   owner: string;

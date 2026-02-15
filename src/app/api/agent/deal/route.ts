@@ -47,6 +47,8 @@ export async function POST(request: NextRequest) {
     title: parsed.data.title,
     stage: parsed.data.stage,
     value: parsed.data.value,
+    setupValue: parsed.data.setupValue,
+    monthlyValue: parsed.data.monthlyValue,
     probability: parsed.data.probability,
     closeDate: parsed.data.closeDate,
     owner: parsed.data.owner,

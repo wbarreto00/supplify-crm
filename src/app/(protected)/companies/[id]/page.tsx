@@ -291,6 +291,14 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
               <input name="value" type="number" min="0" step="0.01" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
             </label>
             <label className="text-sm text-slate-700">
+              Setup
+              <input name="setupValue" type="number" min="0" step="0.01" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+            </label>
+            <label className="text-sm text-slate-700">
+              Mensalidade
+              <input name="monthlyValue" type="number" min="0" step="0.01" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
+            </label>
+            <label className="text-sm text-slate-700">
               Probabilidade
               <input name="probability" type="number" min="0" max="100" className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
             </label>
@@ -320,7 +328,12 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
             {deals.map((deal) => (
               <article key={deal.id} className="rounded-md border border-slate-200 p-3">
                 <div className="mb-2 flex items-center justify-between">
-                  <p className="text-sm font-medium text-slate-900">{deal.title}</p>
+                  <div>
+                    <p className="text-sm font-medium text-slate-900">{deal.title}</p>
+                    <p className="text-xs text-slate-500">
+                      Setup {deal.setupValue.toLocaleString("pt-BR")} | Mensal {deal.monthlyValue.toLocaleString("pt-BR")}
+                    </p>
+                  </div>
                   <DealStageBadge stage={deal.stage} />
                 </div>
                 <form action="/api/forms/deal" method="post" className="grid gap-2 md:grid-cols-2">
@@ -347,6 +360,22 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                     min="0"
                     step="0.01"
                     defaultValue={deal.value}
+                    className="rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  />
+                  <input
+                    name="setupValue"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    defaultValue={deal.setupValue}
+                    className="rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  />
+                  <input
+                    name="monthlyValue"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    defaultValue={deal.monthlyValue}
                     className="rounded-md border border-slate-300 px-3 py-2 text-sm"
                   />
                   <input
