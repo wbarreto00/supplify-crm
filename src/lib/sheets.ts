@@ -122,6 +122,30 @@ async function maybeMigrateCompanies(
   );
   const rows = existing.data.values ?? [];
 
+  const dealsExisting = await withRetry(
+    () =>
+      client.spreadsheets.values.get({
+        spreadsheetId: sheetId,
+        range: `deals!A2:Z`,
+      }),
+    "deals.values.get(for-company-migration)",
+  );
+  const dealRows = dealsExisting.data.values ?? [];
+  const dealHeaders = TABLE_HEADERS.deals;
+  const dealIndex = new Map<string, number>();
+  dealHeaders.forEach((h, i) => dealIndex.set(h, i));
+  const latestStageByCompanyId = new Map<string, { stage: string; updatedAt: string }>();
+  for (const row of dealRows) {
+    const companyId = String(row[dealIndex.get("companyId") ?? -1] ?? "");
+    const stage = String(row[dealIndex.get("stage") ?? -1] ?? "");
+    const updatedAt = String(row[dealIndex.get("updatedAt") ?? -1] ?? "");
+    if (!companyId) continue;
+    const prev = latestStageByCompanyId.get(companyId);
+    if (!prev || updatedAt.localeCompare(prev.updatedAt) > 0) {
+      latestStageByCompanyId.set(companyId, { stage, updatedAt });
+    }
+  }
+
   const newHeaders = TABLE_HEADERS.companies;
   const values: string[][] = [Array.from(newHeaders)];
 
@@ -138,7 +162,10 @@ async function maybeMigrateCompanies(
     const segment = get("segment").trim();
     const size = get("size").trim();
     const status = get("status");
-    const stage = migrateCompanyStatusToStage(status);
+    const inferredStage =
+      latestStageByCompanyId.get(id)?.stage ||
+      migrateCompanyStatusToStage(status);
+    const stage = newHeaders.includes("stage") ? inferredStage : "";
 
     let mergedNotes = notes ?? "";
     const extras: string[] = [];

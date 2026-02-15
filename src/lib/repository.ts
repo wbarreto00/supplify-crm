@@ -1,4 +1,5 @@
 import type { Activity, Company, Contact, Deal } from "@/lib/types";
+import { DEAL_STAGES } from "@/lib/constants";
 import { list, remove, search as searchTable, upsert } from "@/lib/sheets";
 import { clamp, createId, normalizeEmail, normalizeKey, nowIso } from "@/lib/normalization";
 
@@ -12,10 +13,12 @@ function parseBoolean(value: string): boolean {
 }
 
 function toCompany(record: Record<string, string>): Company {
+  const stageRaw = (record.stage ?? "").trim();
+  const stage = (DEAL_STAGES as readonly string[]).includes(stageRaw) ? (stageRaw as Company["stage"]) : "new";
   return {
     id: record.id,
     name: record.name,
-    stage: (record.stage as Company["stage"]) || "new",
+    stage,
     owner: record.owner,
     source: record.source,
     notes: record.notes,
